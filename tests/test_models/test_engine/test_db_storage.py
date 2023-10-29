@@ -18,6 +18,7 @@ import json
 import os
 import pep8
 import unittest
+from unittest.mock import MagicMock
 DBStorage = db_storage.DBStorage
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
            "Review": Review, "State": State, "User": User}
@@ -68,7 +69,7 @@ test_db_storage.py'])
                             "{:s} method needs a docstring".format(func[0]))
 
 
-class TestFileStorage(unittest.TestCase):
+class TestDBStorage(unittest.TestCase):
     """Test the FileStorage class"""
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_returns_dict(self):
@@ -86,3 +87,70 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    def setUp(self):
+        '''
+        Create an instance of the DatabaseStorage class
+        '''
+        self.database_storage = DbStorage()
+
+        self.session = MagicMock()
+
+        self.database_storage.__session = self.session
+
+    def test_get_existing_object(self):
+        '''
+        Create a mock object with a matching ID
+        '''
+        mock_object = MagicMock()
+        mock_object.id = "1"
+
+        self.session.query.return_value.filter_by.return_value.first.return_value = mock_object
+
+        retrieved_object = self.database_storage.get(ObjectA, "1")
+
+        self.assertEqual(retrieved_object, mock_object)
+
+    def test_get_nonexistent_object(self):
+        '''
+        Configure the session mock to return None
+        '''
+        self.session.query.return_value.filter_by.return_value.first.return_value = None
+
+        retrieved_object = self.database_storage.get(ObjectA, "3")
+
+        self.assertIsNone(retrieved_object)
+
+    def setUp(self):
+        '''
+        Create an instance of the DBStorage class
+        '''
+        self.db_storage = DBStorage()
+
+        self.objects = {
+            'ObjectA.1': ObjectA(),
+            'ObjectA.2': ObjectA(),
+            'ObjectB.3': ObjectB()
+        }
+
+        self.db_storage.__objects = self.objects
+
+    def test_count_all_objects(self):
+        '''
+        Call the count method without specifying a class
+        '''
+        count = self.db_storage.count()
+
+        self.assertEqual(count, len(self.objects))
+
+    def test_count_specific_class(self):
+        '''
+        Create a mock class dictionary
+        '''
+        class_dict = {'ObjectA.1': ObjectA(), 'ObjectA.2': ObjectA()}
+
+        self.db_storage.all = MagicMock(return_value=class_dict)
+
+        count = self.db_storage.count(ObjectA)
+
+        self.assertEqual(count, len(class_dict))
