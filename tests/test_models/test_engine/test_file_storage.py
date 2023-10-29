@@ -113,3 +113,58 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    def test_count_all_objects(self):
+        '''
+        Create an instance of the FileStorage class
+        '''
+        file_storage = FileStorage()
+
+        file_storage.add(ObjectA())
+        file_storage.add(ObjectA())
+        file_storage.add(ObjectB())
+
+        count = file_storage.count()
+
+        self.assertEqual(count, 3)
+
+    def test_count_specific_class(self):
+        '''
+        Create an instance of the FileStorage class
+        '''
+        file_storage = FileStorage()
+
+        file_storage.add(ObjectA())
+        file_storage.add(ObjectA())
+        file_storage.add(ObjectB())
+
+        count = file_storage.count(ObjectA)
+
+        self.assertEqual(count, 2)
+
+    def setUp(self):
+        '''
+        Create an instance of the FileStorage class
+        '''
+        self.file_storage = FileStorage()
+
+        self.object_a = ObjectA()
+        self.object_b = ObjectB()
+        self.file_storage.add(self.object_a)
+        self.file_storage.add(self.object_b)
+
+    def test_get_existing_object(self):
+        '''
+        Call the get method with an existing object's class and ID
+        '''
+        retrieved_object = self.file_storage.get(ObjectA, "1")
+
+        self.assertEqual(retrieved_object, self.object_a)
+
+    def test_get_nonexistent_object(self):
+        '''
+        Call the get method with a class and ID that do not exist
+        '''
+        retrieved_object = self.file_storage.get(ObjectA, "3")
+
+        self.assertIsNone(retrieved_object)
