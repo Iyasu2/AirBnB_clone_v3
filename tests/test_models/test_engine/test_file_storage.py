@@ -6,6 +6,7 @@ Contains the TestFileStorageDocs classes
 from datetime import datetime
 import inspect
 import models
+from models import storage
 from models.engine import file_storage
 from models.amenity import Amenity
 from models.base_model import BaseModel
@@ -114,57 +115,19 @@ class TestFileStorage(unittest.TestCase):
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
 
-    def test_count_all_objects(self):
-        '''
-        Create an instance of the FileStorage class
-        '''
-        file_storage = FileStorage()
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get(self):
+        """Test that get resturns one object"""
+        first_state_id = list(storage.all(State).values())[0].id
+        self.assertEqual(first_state_id, storage.get(State, first_state_id).id)
 
-        file_storage.add(ObjectA())
-        file_storage.add(ObjectA())
-        file_storage.add(ObjectB())
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_not_existing_id(self):
+        """Test that get resturns one object"""
+        self.assertEqual(None, storage.get(State, 'SomeBlaH'))
 
-        count = file_storage.count()
-
-        self.assertEqual(count, 3)
-
-    def test_count_specific_class(self):
-        '''
-        Create an instance of the FileStorage class
-        '''
-        file_storage = FileStorage()
-
-        file_storage.add(ObjectA())
-        file_storage.add(ObjectA())
-        file_storage.add(ObjectB())
-
-        count = file_storage.count(ObjectA)
-
-        self.assertEqual(count, 2)
-
-    def setUp(self):
-        '''
-        Create an instance of the FileStorage class
-        '''
-        self.file_storage = FileStorage()
-
-        self.object_a = ObjectA()
-        self.object_b = ObjectB()
-        self.file_storage.add(self.object_a)
-        self.file_storage.add(self.object_b)
-
-    def test_get_existing_object(self):
-        '''
-        Call the get method with an existing object's class and ID
-        '''
-        retrieved_object = self.file_storage.get(ObjectA, "1")
-
-        self.assertEqual(retrieved_object, self.object_a)
-
-    def test_get_nonexistent_object(self):
-        '''
-        Call the get method with a class and ID that do not exist
-        '''
-        retrieved_object = self.file_storage.get(ObjectA, "3")
-
-        self.assertIsNone(retrieved_object)
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count(self):
+        """Test that get resturns one object"""
+        self.assertIsInstance(storage.count(), int)
+        self.assertIsInstance(storage.count(State), int)

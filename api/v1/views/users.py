@@ -1,7 +1,8 @@
 #!/usr/bin/python3
-'''
+
+"""
 This module defines the view for User objects.
-'''
+"""
 from flask import Flask, Blueprint, jsonify, request, abort
 from models import storage
 from models.user import User
