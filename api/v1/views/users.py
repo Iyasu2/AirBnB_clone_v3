@@ -1,85 +1,112 @@
 #!/usr/bin/python3
-
-"""
-This module defines the view for User objects.
-"""
-from flask import Flask, Blueprint, jsonify, request, abort
+"""Handles all RESTful API actions for `User`"""
+from api.v1.views import app_views
+from flask import jsonify, request, abort
 from models import storage
 from models.user import User
-from api.v1.views import app_views
-
-user_view = Blueprint('user_view', __name__)
+from hashlib import md5
 
 
-@user_view.route('/users', methods=['GET'], strict_slashes=False)
-def get_users():
-    '''
-    get all users
-    '''
+@app_views.route("/users")
+def users():
+    """Get all users
+
+    Returns:
+        list: All the users
+    """
     users = storage.all(User)
-    return jsonify([user.to_dict() for user in users.values()])
+    result = []
+
+    for user in users.values():
+        result.append(user.to_dict())
+
+    return jsonify(result)
 
 
-@user_view.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
-def get_user(user_id):
-    '''
-    get user by user id
-    '''
+@app_views.route("/users/<user_id>")
+def one_user(user_id):
+    """Get one user
+
+    Args:
+        user_id (str): ID of the user
+
+    Returns:
+        dict: The user in JSON
+    """
     user = storage.get(User, user_id)
-    if user is None:
-        return jsonify({"error": "Not found"}), 404
+    if not user:
+        abort(404)
+
     return jsonify(user.to_dict())
 
 
-@user_view.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route("/users/<user_id>", methods=["DELETE"])
 def delete_user(user_id):
-    '''
-    delete user by user id
-    '''
+    """Delete user
+
+    Args:
+        user_id (str): ID of the user
+
+    Returns:
+        dict: Am empty JSON
+    """
     user = storage.get(User, user_id)
-    if user is None:
-        return jsonify({"error": "Not found"}), 404
+    if not user:
+        abort(404)
+
     user.delete()
     storage.save()
+
     return jsonify({})
 
 
-@user_view.route('/users', methods=['POST'], strict_slashes=False)
+@app_views.route("/users", methods=["POST"])
 def create_user():
-    '''
-    create a user object
-    '''
-    data = request.get_json()
-    if data is None:
-        return jsonify({"error": "Not a JSON"}), 400
-    if "email" not in data:
-        return jsonify({"error": "Missing email"}), 400
-    if "password" not in data:
-        return jsonify({"error": "Missing password"}), 400
-    user = User(**data)
+    """Create user
+
+    Returns:
+        dict: User JSON
+    """
+    payload = request.get_json()
+    if not payload:
+        abort(400, "Not a JSON")
+    if "email" not in payload:
+        abort(400, "Missing email")
+    if "password" not in payload:
+        abort(400, "Missing password")
+
+    user = User(**payload)
     user.save()
+
     return jsonify(user.to_dict()), 201
 
 
-@user_view.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route("/users/<user_id>", methods=["PUT"])
 def update_user(user_id):
-    '''
-    update user by user id
-    '''
+    """Update user
+
+    Args:
+        user_id (str): ID of the user
+
+    Returns:
+        dict: Updated user in JSON
+    """
     user = storage.get(User, user_id)
-    if user is None:
-        return jsonify({"error": "Not found"}), 404
-    data = request.get_json()
-    if data is None:
-        return jsonify({"error": "Not a JSON"}), 400
-    for key, value in data.items():
-        if key not in ['id', 'email', 'created_at', 'updated_at']:
-            setattr(user, key, value)
+    payload = request.get_json()
+    if not user:
+        abort(404)
+    if not payload:
+        abort(400, description="Not a JSON")
+
+    for key, value in user.to_dict().items():
+        if key not in ["id", "email", "created_at", "updated_at", "__class__"]:
+            if key in payload:
+                if key == "password":
+                    setattr(user, key,
+                            md5(str(payload[key]).encode()).hexdigest())
+                else:
+                    setattr(user, key,
+                            payload[key] if key in payload else value)
     user.save()
-    return jsonify(user.to_dict()), 200
 
-
-'''
-Register the state_view Blueprint under app_views
-'''
-app_views.register_blueprint(user_view)
+    return jsonify(user.to_dict())
