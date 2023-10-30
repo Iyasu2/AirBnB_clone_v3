@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""It holds class City"""
+"""it holds class City"""
 import models
 from models.base_model import BaseModel, Base
 from os import getenv
