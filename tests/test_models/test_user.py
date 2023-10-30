@@ -10,6 +10,7 @@ from models import user
 from models.base_model import BaseModel
 import pep8
 import unittest
+from hashlib import md5
 User = user.User
 
 
@@ -80,10 +81,13 @@ class TestUser(unittest.TestCase):
         """Test that User has attr password, and it's an empty string"""
         user = User()
         self.assertTrue(hasattr(user, "password"))
+
+        new_d = user.to_dict()
         if models.storage_t == 'db':
-            self.assertEqual(user.password, None)
+            self.assertFalse("password" in new_d)
         else:
-            self.assertEqual(user.password, "")
+            hashed_password = md5(user.password.encode()).hexdigest()
+            self.assertEqual(new_d["password"], hashed_password)
 
     def test_first_name_attr(self):
         """Test that User has attr first_name, and it's an empty string"""
@@ -110,7 +114,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual(type(new_d), dict)
         self.assertFalse("_sa_instance_state" in new_d)
         for attr in u.__dict__:
-            if attr is not "_sa_instance_state":
+            if attr != "_sa_instance_state" and attr != "password":
                 self.assertTrue(attr in new_d)
         self.assertTrue("__class__" in new_d)
 
