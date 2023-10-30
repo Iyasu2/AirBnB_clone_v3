@@ -3,6 +3,7 @@
 """
 This module defines the view for User objects.
 """
+
 from flask import Flask, Blueprint, jsonify, request, abort
 from models import storage
 from models.user import User
@@ -11,19 +12,23 @@ from api.v1.views import app_views
 user_view = Blueprint('user_view', __name__)
 
 
-@user_view.route('/users', methods=['GET'], strict_slashes=False)
 def get_users():
     '''
-    get all users
+    Get a list of all users.
+    Returns:
+        JSON response with a list of user dictionaries.
     '''
     users = storage.all(User)
     return jsonify([user.to_dict() for user in users.values()])
 
 
-@user_view.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
 def get_user(user_id):
     '''
-    get user by user id
+    Get a user by user id.
+    Args:
+        user_id (str): The user's ID.
+    Returns:
+        JSON response with the user's dictionary.
     '''
     user = storage.get(User, user_id)
     if user is None:
@@ -31,10 +36,13 @@ def get_user(user_id):
     return jsonify(user.to_dict())
 
 
-@user_view.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
 def delete_user(user_id):
     '''
-    delete user by user id
+    Delete a user by user id.
+    Args:
+        user_id (str): The user's ID.
+    Returns:
+        JSON response with an empty dictionary.
     '''
     user = storage.get(User, user_id)
     if user is None:
@@ -44,10 +52,11 @@ def delete_user(user_id):
     return jsonify({})
 
 
-@user_view.route('/users', methods=['POST'], strict_slashes=False)
 def create_user():
     '''
-    create a user object
+    Create a user object.
+    Returns:
+        JSON response with the created user's dictionary.
     '''
     data = request.get_json()
     if data is None:
@@ -61,10 +70,13 @@ def create_user():
     return jsonify(user.to_dict()), 201
 
 
-@user_view.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
 def update_user(user_id):
     '''
-    update user by user id
+    Update a user by user id.
+    Args:
+        user_id (str): The user's ID.
+    Returns:
+        JSON response with the updated user's dictionary.
     '''
     user = storage.get(User, user_id)
     if user is None:
@@ -80,6 +92,6 @@ def update_user(user_id):
 
 
 '''
-Register the state_view Blueprint under app_views
+Register the user_view Blueprint under app_views
 '''
 app_views.register_blueprint(user_view)
