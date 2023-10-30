@@ -40,7 +40,7 @@ class User(BaseModel, Base):
             new_dict["created_at"] = new_dict["created_at"].strftime(time)
         if "updated_at" in new_dict:
             new_dict["updated_at"] = new_dict["updated_at"].strftime(time)
-        new_dict["class"] = self.class.__name
+        new_dict["class"] = self.class .__name
         if not save_password and "password" in new_dict:
             del new_dict["password"]
         if "_sa_instance_state" in new_dict:
@@ -48,7 +48,8 @@ class User(BaseModel, Base):
         return new_dict
 
     def save(self):
-        """Updates the attribute 'updated_at' with the current datetime and saves the data"""
+        """Updates the attribute 'updated_at' with the
+        current datetime and saves the data"""
         self.updated_at = datetime.utcnow()
         if models.storage_t != 'db':
             models.storage.new(self)

@@ -19,6 +19,7 @@ if models.storage_t == "db":
 else:
     Base = object
 
+
 class BaseModel:
     """The BaseModel class from which future classes will be derived"""
     if models.storage_t == "db":
@@ -49,11 +50,11 @@ class BaseModel:
 
     def str(self):
         """String representation of the BaseModel class"""
-        return "[{:s}] ({:s}) {}".format(self.class.name, self.id,
-                                         self.dict)
+        return "[{:s}] ({:s}) {}".format(self.class .name, self.id, self.dict)
 
     def save(self):
-        """Updates the attribute 'updated_at' with the current datetime and saves the data"""
+        """Updates the attribute 'updated_at' with the current
+        datetime and saves the data"""
         self.updated_at = datetime.utcnow()
         if models.storage_t != 'db':
             models.storage.new(self)
@@ -66,7 +67,7 @@ class BaseModel:
             new_dict["created_at"] = new_dict["created_at"].strftime(time)
         if "updated_at" in new_dict:
             new_dict["updated_at"] = new_dict["updated_at"].strftime(time)
-        new_dict["class"] = self.class.name
+        new_dict["class"] = self.class .name
         if not save_password and "password" in new_dict:
             del new_dict["password"]
         if "_sa_instance_state" in new_dict:
