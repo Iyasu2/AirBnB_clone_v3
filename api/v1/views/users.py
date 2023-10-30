@@ -1,10 +1,8 @@
 #!/usr/bin/python3
-
-"""
-This module defines the view for User objects.
-"""
-
-from flask import Flask, Blueprint, jsonify, request, abort
+'''
+this module defines the view for user objects
+'''
+from flask import Flask, Blueprint, jsonify, request
 from models import storage
 from models.user import User
 from api.v1.views import app_views
@@ -12,23 +10,19 @@ from api.v1.views import app_views
 user_view = Blueprint('user_view', __name__)
 
 
+@user_view.route('/users', methods=['GET'], strict_slashes=False)
 def get_users():
     '''
-    Get a list of all users.
-    Returns:
-        JSON response with a list of user dictionaries.
+    get all user objects
     '''
     users = storage.all(User)
     return jsonify([user.to_dict() for user in users.values()])
 
 
+@user_view.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
 def get_user(user_id):
     '''
-    Get a user by user id.
-    Args:
-        user_id (str): The user's ID.
-    Returns:
-        JSON response with the user's dictionary.
+    get user using user id
     '''
     user = storage.get(User, user_id)
     if user is None:
@@ -36,27 +30,23 @@ def get_user(user_id):
     return jsonify(user.to_dict())
 
 
+@user_view.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
 def delete_user(user_id):
     '''
-    Delete a user by user id.
-    Args:
-        user_id (str): The user's ID.
-    Returns:
-        JSON response with an empty dictionary.
+    user delete using user id
     '''
     user = storage.get(User, user_id)
     if user is None:
         return jsonify({"error": "Not found"}), 404
     user.delete()
     storage.save()
-    return jsonify({})
+    return jsonify({}), 200
 
 
+@user_view.route('/users', methods=['POST'], strict_slashes=False)
 def create_user():
     '''
-    Create a user object.
-    Returns:
-        JSON response with the created user's dictionary.
+    create a user
     '''
     data = request.get_json()
     if data is None:
@@ -70,13 +60,10 @@ def create_user():
     return jsonify(user.to_dict()), 201
 
 
+@user_view.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
 def update_user(user_id):
     '''
-    Update a user by user id.
-    Args:
-        user_id (str): The user's ID.
-    Returns:
-        JSON response with the updated user's dictionary.
+    update user using user id
     '''
     user = storage.get(User, user_id)
     if user is None:
@@ -91,7 +78,4 @@ def update_user(user_id):
     return jsonify(user.to_dict()), 200
 
 
-'''
-Register the user_view Blueprint under app_views
-'''
 app_views.register_blueprint(user_view)
