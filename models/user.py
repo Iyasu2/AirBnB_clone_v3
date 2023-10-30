@@ -30,15 +30,4 @@ class User(BaseModel, Base):
     def __init__(self, *args, **kwargs):
         """user initialize"""
         super().__init__(*args, **kwargs)
-        if models.storage_t != 'db':
-            self.password = md5(self.password.encode()).hexdigest()
-
-    def to_dict(self, save_to_file=False):
-        """Returns a dictionary containing all keys/values of the instance"""
-        new_dict = super().to_dict(save_to_file)
-        if models.storage_t != 'db' and not save_to_file:
-            new_dict["password"] = self.password
-        if "password" in new_dict:
-            hashed_password = md5(new_dict["password"].encode()).hexdigest()
-            new_dict["password"] = hashed_password
-        return new_dict
+        self.password = md5(self.password.encode()).hexdigest()
