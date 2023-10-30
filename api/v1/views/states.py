@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 '''
-This module defines the view for State objects.
+defines the view for State objects.
 '''
 from flask import Blueprint, jsonify, request
 from models import storage
