@@ -5,6 +5,8 @@ This module defines the view for Place objects.
 from flask import Flask, Blueprint, jsonify, request
 from models import storage
 from models.place import Place
+from models.state import State
+from models.city import City
 from api.v1.views import app_views
 from api.v1.views.cities import get_city
 
@@ -99,6 +101,46 @@ def update_place(place_id):
             setattr(place, key, value)
     place.save()
     return jsonify(place.to_dict()), 200
+
+
+@place_view.route('/places_search', methods=['POST'], strict_slashes=False)
+def search_places():
+    data = request.get_json()
+
+    if data is None:
+        return jsonify({"error": "Not a JSON"}), 400
+
+    states = data.get("states", [])
+    cities = data.get("cities", [])
+    amenities = data.get("amenities", [])
+
+    if not states and not cities:
+        places = storage.all(Place).values()
+    else:
+        places = set()
+
+        if states:
+            for state_id in states:
+                state = storage.get(State, state_id)
+                if state is not None:
+                    for city in state.cities:
+                        places.update(city.places)
+
+        if cities:
+            for city_id in cities:
+                city = storage.get(City, city_id)
+                if city is not None:
+                    places.update(city.places)
+
+    if amenities:
+        places = [
+            place for place in places
+            if all(amenity_id in place.amenities for amenity_id in amenities)
+        ]
+
+    place_dicts = [place.to_dict() for place in places]
+
+    return jsonify(place_dicts)
 
 
 '''
