@@ -77,7 +77,9 @@ def create_place(city_id):
     if user is None:
         return jsonify({"error": "Not found"}), 404
 
-    place = Place(city_id=city_id, **data)
+    place = Place(city_id=city_id)
+    for key, value in data.items():
+        setattr(place, key, value)
     place.save()
     return jsonify(place.to_dict()), 201
 

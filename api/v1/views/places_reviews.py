@@ -60,7 +60,9 @@ def create_review(place_id):
         return jsonify({"error": "User not found"}), 404
     if "text" not in data:
         return jsonify({"error": "Missing text"}), 400
-    review = Review(**data)
+    review = Review()
+    for key, value in data.items():
+        setattr(review, key, value)
     review.place_id = place_id
     review.save()
     return jsonify(review.to_dict()), 201
