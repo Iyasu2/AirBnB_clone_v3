@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 '''
-this module defines the view for user objects
+defines the view for user objects
 '''
 from flask import Flask, Blueprint, jsonify, request
 from models import storage
