@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 '''
-This module defines the view for City objects.
+module defines the view for City objects.
 '''
 from flask import Blueprint, jsonify, request
 from models import storage
