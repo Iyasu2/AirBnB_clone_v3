@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify
 from models import storage
 from models.place import Place
 from models.amenity import Amenity
+from models import storage_t
 from api.v1.views import app_views
 
 
@@ -15,7 +16,10 @@ def get_place_amenities(place_id):
     if place is None:
         return jsonify({"error": "Not found"}), 404
     amenities = place.amenities
-    return jsonify([amenity.to_dict() for amenity in amenities])
+    if storage_t == "db":
+        return jsonify([amenity.to_dict() for amenity in amenities])
+    else:
+        return jsonify(amenities)
 
 
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
@@ -30,7 +34,11 @@ def delete_place_amenity(place_id, amenity_id):
         return jsonify({"error": "Not found"}), 404
     if amenity not in place.amenities:
         return jsonify({"error": "Not found"}), 404
-    place.amenities.remove(amenity)
+
+    if storage_t == "db":
+        place.amenities.remove(amenity)
+    else:
+        place.amenity_ids.remove(amenity)
     storage.save()
     return jsonify({}), 200
 
@@ -47,6 +55,10 @@ def link_place_amenity(place_id, amenity_id):
         return jsonify({"error": "Not found"}), 404
     if amenity in place.amenities:
         return jsonify(amenity.to_dict()), 200
-    place.amenities.append(amenity)
+
+    if storage_t == "db":
+        place.amenities.append(amenity)
+    else:
+        place.amenity_ids.append(amenity.id)
     storage.save()
     return jsonify(amenity.to_dict()), 201
