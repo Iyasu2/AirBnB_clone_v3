@@ -17,3 +17,9 @@ from api.v1.views.places import *
 from api.v1.views.places_reviews import *
 
 app_views.register_blueprint(states.state_view)
+app_views.register_blueprint(cities.city_view)
+app_views.register_blueprint(amenities.amenity_view)
+app_views.register_blueprint(users.user_view)
+app_views.register_blueprint(places.place_view)
+app_views.register_blueprint(places_reviews.places_reviews_view)
+app_views.register_blueprint(places_amenities.places_amenities_view)
