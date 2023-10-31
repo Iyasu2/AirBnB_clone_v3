@@ -8,10 +8,8 @@ from models.state import State
 from models.city import City
 from api.v1.views import app_views
 
-city_view = Blueprint('city_view', __name__)
 
-
-@city_view.route('/states/<state_id>/cities',
+@app_views.route('/states/<state_id>/cities',
                  methods=['GET'], strict_slashes=False)
 def get_cities(state_id):
     '''
@@ -24,7 +22,7 @@ def get_cities(state_id):
     return jsonify([city.to_dict() for city in cities])
 
 
-@city_view.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
 def get_city(city_id):
     '''
     get city object by city id
@@ -35,7 +33,7 @@ def get_city(city_id):
     return jsonify(city.to_dict())
 
 
-@city_view.route('/cities/<city_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/cities/<city_id>', methods=['DELETE'], strict_slashes=False)
 def delete_city(city_id):
     '''
     delete city object by city id
@@ -48,7 +46,7 @@ def delete_city(city_id):
     return jsonify({}), 200
 
 
-@city_view.route('/states/<state_id>/cities',
+@app_views.route('/states/<state_id>/cities',
                  methods=['POST'], strict_slashes=False)
 def create_city(state_id):
     '''
@@ -70,7 +68,7 @@ def create_city(state_id):
     return jsonify(city.to_dict()), 201
 
 
-@city_view.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
 def update_city(city_id):
     '''
     update city by city id

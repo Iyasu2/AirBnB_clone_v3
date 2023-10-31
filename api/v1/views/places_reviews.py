@@ -6,10 +6,8 @@ from models.place import Place
 from models.review import Review
 from api.v1.views import app_views
 
-places_reviews_view = Blueprint('places_reviews_view', __name__)
 
-
-@places_reviews_view.route('/places/<place_id>/reviews',
+@app_views.route('/places/<place_id>/reviews',
                            methods=['GET'], strict_slashes=False)
 def get_place_reviews(place_id):
     """get review from place id"""
@@ -20,7 +18,7 @@ def get_place_reviews(place_id):
     return jsonify([review.to_dict() for review in reviews])
 
 
-@places_reviews_view.route('/reviews/<review_id>',
+@app_views.route('/reviews/<review_id>',
                            methods=['GET'], strict_slashes=False)
 def get_review(review_id):
     """get review from review id"""
@@ -30,7 +28,7 @@ def get_review(review_id):
     return jsonify(review.to_dict())
 
 
-@places_reviews_view.route('/reviews/<review_id>',
+@app_views.route('/reviews/<review_id>',
                            methods=['DELETE'], strict_slashes=False)
 def delete_review(review_id):
     """delete review from review id"""
@@ -42,7 +40,7 @@ def delete_review(review_id):
     return jsonify({}), 200
 
 
-@places_reviews_view.route('/places/<place_id>/reviews',
+@app_views.route('/places/<place_id>/reviews',
                            methods=['POST'], strict_slashes=False)
 def create_review(place_id):
     """create review object"""
@@ -68,7 +66,7 @@ def create_review(place_id):
     return jsonify(review.to_dict()), 201
 
 
-@places_reviews_view.route('/reviews/<review_id>',
+@app_views.route('/reviews/<review_id>',
                            methods=['PUT'], strict_slashes=False)
 def update_review(review_id):
     """update review of review id"""

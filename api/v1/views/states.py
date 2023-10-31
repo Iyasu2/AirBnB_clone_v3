@@ -7,10 +7,8 @@ from models import storage
 from models.state import State
 from api.v1.views import app_views
 
-state_view = Blueprint('state_view', __name__)
 
-
-@state_view.route('/states', methods=['GET'], strict_slashes=False)
+@app_views.route('/states', methods=['GET'], strict_slashes=False)
 def get_states():
     '''
     get all states
@@ -19,7 +17,7 @@ def get_states():
     return jsonify([state.to_dict() for state in states.values()])
 
 
-@state_view.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
 def get_state(state_id):
     '''
     get states by id
@@ -30,7 +28,7 @@ def get_state(state_id):
     return jsonify(state.to_dict())
 
 
-@state_view.route('/states/<state_id>',
+@app_views.route('/states/<state_id>',
                   methods=['DELETE'],
                   strict_slashes=False)
 def delete_state(state_id):
@@ -45,7 +43,7 @@ def delete_state(state_id):
     return jsonify({}), 200
 
 
-@state_view.route('/states', methods=['POST'], strict_slashes=False)
+@app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_state():
     '''
     create a state object
@@ -60,7 +58,7 @@ def create_state():
     return jsonify(state.to_dict()), 201
 
 
-@state_view.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
 def update_state(state_id):
     '''
     update an existing state object by id

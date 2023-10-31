@@ -10,10 +10,8 @@ from models.city import City
 from api.v1.views import app_views
 from api.v1.views.cities import get_city
 
-place_view = Blueprint('place_view', __name__)
 
-
-@place_view.route('/cities/<city_id>/places',
+@app_views.route('/cities/<city_id>/places',
                   methods=['GET'], strict_slashes=False)
 def get_places(city_id):
     '''
@@ -28,7 +26,7 @@ def get_places(city_id):
     return jsonify(city_places)
 
 
-@place_view.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
 def get_place(place_id):
     '''
     get place from place id
@@ -39,7 +37,7 @@ def get_place(place_id):
     return jsonify(place.to_dict())
 
 
-@place_view.route('/places/<place_id>',
+@app_views.route('/places/<place_id>',
                   methods=['DELETE'],
                   strict_slashes=False)
 def delete_place(place_id):
@@ -54,7 +52,7 @@ def delete_place(place_id):
     return jsonify({}), 200
 
 
-@place_view.route('/cities/<city_id>/places',
+@app_views.route('/cities/<city_id>/places',
                   methods=['POST'], strict_slashes=False)
 def create_place(city_id):
     '''
@@ -84,7 +82,7 @@ def create_place(city_id):
     return jsonify(place.to_dict()), 201
 
 
-@place_view.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
 def update_place(place_id):
     '''
     update place from place id
@@ -105,7 +103,7 @@ def update_place(place_id):
     return jsonify(place.to_dict()), 200
 
 
-@place_view.route('/places_search', methods=['POST'], strict_slashes=False)
+@app_views.route('/places_search', methods=['POST'], strict_slashes=False)
 def search_places():
     data = request.get_json()
 

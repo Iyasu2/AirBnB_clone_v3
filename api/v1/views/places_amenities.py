@@ -6,10 +6,8 @@ from models.place import Place
 from models.amenity import Amenity
 from api.v1.views import app_views
 
-places_amenities_view = Blueprint('places_amenities_view', __name__)
 
-
-@places_amenities_view.route('/places/<place_id>/amenities',
+@app_views.route('/places/<place_id>/amenities',
                              methods=['GET'], strict_slashes=False)
 def get_place_amenities(place_id):
     """get amenity using place id"""
@@ -20,7 +18,7 @@ def get_place_amenities(place_id):
     return jsonify([amenity.to_dict() for amenity in amenities])
 
 
-@places_amenities_view.route('/places/<place_id>/amenities/<amenity_id>',
+@app_views.route('/places/<place_id>/amenities/<amenity_id>',
                              methods=['DELETE'], strict_slashes=False)
 def delete_place_amenity(place_id, amenity_id):
     """delete amenity using place and amenity id"""
@@ -37,7 +35,7 @@ def delete_place_amenity(place_id, amenity_id):
     return jsonify({}), 200
 
 
-@places_amenities_view.route('/places/<place_id>/amenities/<amenity_id>',
+@app_views.route('/places/<place_id>/amenities/<amenity_id>',
                              methods=['POST'], strict_slashes=False)
 def link_place_amenity(place_id, amenity_id):
     """line amenity with place using amenity and place id"""
