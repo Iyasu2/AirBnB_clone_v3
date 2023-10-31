@@ -9,6 +9,7 @@ from models.state import State
 from models.city import City
 from api.v1.views import app_views
 from api.v1.views.cities import get_city
+from models.user import User
 
 
 @app_views.route('/cities/<city_id>/places',
@@ -17,13 +18,13 @@ def get_places(city_id):
     '''
     get places from city id
     '''
-    city = get_city(city_id)
+    city = storage.get(City, city_id)
     if city is None:
         return jsonify({"error": "Not found"}), 404
-    places = storage.all(Place)
-    city_places = [place.to_dict() for place in places.values()
-                   if place.city_id == city_id]
-    return jsonify(city_places)
+    result = []
+    for place in city.places:
+        result.append(place.to_dict())
+    return jsonify(result)
 
 
 @app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
@@ -58,7 +59,7 @@ def create_place(city_id):
     '''
     create place inside city using city id
     '''
-    city = get_city(city_id)
+    city = storage.get(City, city_id)
     if city is None:
         return jsonify({"error": "Not found"}), 404
 

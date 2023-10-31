@@ -33,7 +33,8 @@ def not_found(error):
     response = {
         "error": "Not found"
     }
-    return jsonify(response), 404
+    response.status_code = 404
+    return jsonify(response)
 
 
 if __name__ == '__main__':
