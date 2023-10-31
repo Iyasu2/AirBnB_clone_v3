@@ -1,11 +1,13 @@
 #!/usr/bin/python3
-'''
-This module starts a basic application.
-'''
+"""
+this module starts a basic application
+
+it also have errorhandler and teardown methods
+"""
+from api.v1.views import app_views
 from flask import Flask, jsonify
 from flask_cors import CORS
 from models import storage
-from api.v1.views import app_views
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
