@@ -143,9 +143,3 @@ def search_places():
     place_dicts = [place.to_dict() for place in places]
 
     return jsonify(place_dicts)
-
-
-'''
-Register the state_view Blueprint under app_views
-'''
-app_views.register_blueprint(place_view)

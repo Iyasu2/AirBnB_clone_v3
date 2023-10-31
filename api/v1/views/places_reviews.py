@@ -88,6 +88,3 @@ def update_review(review_id):
             setattr(review, key, value)
     review.save()
     return jsonify(review.to_dict()), 200
-
-
-app_views.register_blueprint(places_reviews_view)

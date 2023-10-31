@@ -78,9 +78,3 @@ def update_amenity(amenity_id):
             setattr(amenity, key, value)
     amenity.save()
     return jsonify(amenity.to_dict()), 200
-
-
-'''
-Register the state_view Blueprint under app_views
-'''
-app_views.register_blueprint(amenity_view)

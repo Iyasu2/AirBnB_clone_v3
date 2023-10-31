@@ -86,9 +86,3 @@ def update_city(city_id):
             setattr(city, key, value)
     city.save()
     return jsonify(city.to_dict()), 200
-
-
-'''
-Register the state_view Blueprint under app_views
-'''
-app_views.register_blueprint(city_view)
