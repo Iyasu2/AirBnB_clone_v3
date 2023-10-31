@@ -8,7 +8,7 @@ from api.v1.views import app_views
 
 
 @app_views.route('/places/<place_id>/reviews',
-                           methods=['GET'], strict_slashes=False)
+                 methods=['GET'], strict_slashes=False)
 def get_place_reviews(place_id):
     """get review from place id"""
     place = storage.get(Place, place_id)
@@ -19,7 +19,7 @@ def get_place_reviews(place_id):
 
 
 @app_views.route('/reviews/<review_id>',
-                           methods=['GET'], strict_slashes=False)
+                 methods=['GET'], strict_slashes=False)
 def get_review(review_id):
     """get review from review id"""
     review = storage.get(Review, review_id)
@@ -29,7 +29,7 @@ def get_review(review_id):
 
 
 @app_views.route('/reviews/<review_id>',
-                           methods=['DELETE'], strict_slashes=False)
+                 methods=['DELETE'], strict_slashes=False)
 def delete_review(review_id):
     """delete review from review id"""
     review = storage.get(Review, review_id)
@@ -41,7 +41,7 @@ def delete_review(review_id):
 
 
 @app_views.route('/places/<place_id>/reviews',
-                           methods=['POST'], strict_slashes=False)
+                 methods=['POST'], strict_slashes=False)
 def create_review(place_id):
     """create review object"""
     place = storage.get(Place, place_id)
@@ -58,16 +58,15 @@ def create_review(place_id):
         return jsonify({"error": "User not found"}), 404
     if "text" not in data:
         return jsonify({"error": "Missing text"}), 400
-    review = Review()
+    review = Review(place_id=place_id)
     for key, value in data.items():
         setattr(review, key, value)
-    review.place_id = place_id
     review.save()
     return jsonify(review.to_dict()), 201
 
 
 @app_views.route('/reviews/<review_id>',
-                           methods=['PUT'], strict_slashes=False)
+                 methods=['PUT'], strict_slashes=False)
 def update_review(review_id):
     """update review of review id"""
     review = storage.get(Review, review_id)
